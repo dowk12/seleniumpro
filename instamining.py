@@ -37,6 +37,12 @@ hashtags = hashtags_list.find_elements_by_class_name("-qQT3")
 for hashtag in hashtags:
     hashtag = hashtag.get_attribute("href")
     browser.execute_script(f"window.open('{hashtag}')")
-    time.sleep(5)
 
+for window in browser.window_handles[1:]:
+    browser.switch_to.window(window)
+    time.sleep(1)
+    hashtag_name = browser.find_element_by_tag_name("h1")
+    print(hashtag_name.text[1:])
+
+time.sleep(3)
 browser.quit()
