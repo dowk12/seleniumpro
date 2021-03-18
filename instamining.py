@@ -14,6 +14,11 @@ INSTAGRAM_PW = "clzkseptM1!"
 
 main_hashtag = "dog"
 
+
+def wait_for(locator):
+    return WebDriverWait(browser, 10).until(EC.presence_of_element_located(locator))
+
+
 browser.get(f"https://www.instagram.com/accounts/login/")
 
 time.sleep(5)
@@ -24,14 +29,12 @@ browser.find_elements_by_class_name("sqdOP")[1].send_keys(Keys.ENTER)
 
 ############ 로그인 완료 #######################
 
-search_bar = WebDriverWait(browser, 10).until(
-    EC.presence_of_element_located((By.CLASS_NAME, "XTCLo"))
-)
+search_bar = wait_for((By.CLASS_NAME, "XTCLo"))
+
 search_bar.send_keys("#dog")
 
-hashtags_list = WebDriverWait(browser, 10).until(
-    EC.presence_of_element_located((By.CLASS_NAME, "fuqBx"))
-)
+hashtags_list = wait_for((By.CLASS_NAME, "fuqBx"))
+
 hashtags = hashtags_list.find_elements_by_class_name("-qQT3")
 
 for hashtag in hashtags:
@@ -40,9 +43,14 @@ for hashtag in hashtags:
 
 for window in browser.window_handles[1:]:
     browser.switch_to.window(window)
-    time.sleep(1)
-    hashtag_name = browser.find_element_by_tag_name("h1")
-    print(hashtag_name.text[1:])
+    hashtag_name = wait_for((By.TAG_NAME, "h1"))
+    post_count = wait_for((By.CLASS_NAME, "g47SY"))
+    if post_count:
+        post_count = int(post_count.text.replace(",", ""))
+    if hashtag_name:
+        hashtag_name = hashtag_name.text[1:]
+    if hashtag_name and post_count:
+        print(hashtag_name, post_count)
 
 time.sleep(3)
 browser.quit()
