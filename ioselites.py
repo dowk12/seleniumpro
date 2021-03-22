@@ -17,4 +17,4 @@ for index, hacktool in enumerate(hacktools):
         driver.back()
         hacktool.click()
 
-    time.sleep(3)
+    time.sleep(2)

@@ -1,3 +1,4 @@
+import csv
 import time
 from selenium import webdriver
 from selenium.webdriver import ActionChains
@@ -13,10 +14,29 @@ INSTAGRAM_ID = "stonerl12"
 INSTAGRAM_PW = "clzkseptM1!"
 
 main_hashtag = "dog"
+max_hashtags = 20
+
+file = open(f"{main_hashtag}-report.csv", "w")
+writer = csv.writer(file)
+write.writerow(["Hashtag", "Post Count"])
 
 
 def wait_for(locator):
     return WebDriverWait(browser, 10).until(EC.presence_of_element_located(locator))
+
+
+def extract_data():
+    results = []
+    hashtag_name = wait_for((By.TAG_NAME, "h1"))
+    post_count = wait_for((By.CLASS_NAME, "g47SY"))
+    if post_count:
+        post_count = int(post_count.text.replace(",", ""))
+    if hashtag_name:
+        hashtag_name = hashtag_name.text[1:]
+    if hashtag_name and post_count:
+        result = f"{hashtag_name}, {post_count}"
+        results.append(result)
+    return results
 
 
 browser.get(f"https://www.instagram.com/accounts/login/")
@@ -43,14 +63,10 @@ for hashtag in hashtags:
 
 for window in browser.window_handles[1:]:
     browser.switch_to.window(window)
-    hashtag_name = wait_for((By.TAG_NAME, "h1"))
-    post_count = wait_for((By.CLASS_NAME, "g47SY"))
-    if post_count:
-        post_count = int(post_count.text.replace(",", ""))
-    if hashtag_name:
-        hashtag_name = hashtag_name.text[1:]
-    if hashtag_name and post_count:
-        print(hashtag_name, post_count)
+    results = extract_data()
+    time.sleep(1)
+print(results)
+
 
 time.sleep(3)
 browser.quit()
